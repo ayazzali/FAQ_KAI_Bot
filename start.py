@@ -42,19 +42,19 @@ def giveAnswer (bot, update):
     print('[giveAnswer]:')
     query = update.callback_query
     print('[giveAnswer]' +query.message.text)
-    query = update.callback_query
+    # query = update.callback_query
 
-    if query.find(';')!=-1:
+    if query.data.find(';')!=-1:
         bot.edit_message_text(text="Тра-ля ЛЯЯЯЯЯЯЯЯЯЯЯЯЯЯЯЯЯЯЯЯЯЯ",
                             chat_id=query.message.chat_id,
-                            message_id=query.split(';')[0]), 
-
-    #print(update.message.chat.username+' [giveAnswer]'+'\r\n'+query.message.text+'\r\n')
-    t='<b>'+query.message.text+'</b> \r\n'+Db().GetByColumnName('db_001.db', 'T_Question_Answer', 'id',query.data)[0][2]
-    bot.edit_message_text(text=t,
-                          chat_id=query.message.chat_id,
-                          message_id=query.message.message_id, 
-                          parse_mode=ParseMode.HTML)
+                            message_id=query.data.split(';')[0]), 
+    else:
+        #print(update.message.chat.username+' [giveAnswer]'+'\r\n'+query.message.text+'\r\n')
+        t='<b>'+query.message.text+'</b> \r\n'+Db().GetByColumnName('db_001.db', 'T_Question_Answer', 'id',query.data)[0][2]
+        bot.edit_message_text(text=t,
+                            chat_id=query.message.chat_id,
+                            message_id=query.message.message_id, 
+                            parse_mode=ParseMode.HTML)
 
 def search(text, table, column):
     resByAllWordsArr = []  # [[][][]]
