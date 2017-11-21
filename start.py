@@ -169,7 +169,7 @@ class For_more_answers:
     """1024;1023,23;1021,12;1022,4"""
 
     def __init__(self):
-        messages=[]
+        self.messages=[]
     
     message_id_from_usersText=''
     """ ['5,1063', '23,1064', '19,1065'] """
