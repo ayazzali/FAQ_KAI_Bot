@@ -152,14 +152,7 @@ def word_cleaner(lst):
 
     counter = 0
     for souz in except_words:
-        for x in lst:
-            if souz != x:
-                try:
-                    lst.replace(x, Porter.stem(x))
-                except AttributeError:
-                    counter += 1
-            else:
-                lst.remove(x)
+            lst = [Porter.stem(x) for x in lst if souz != x]
 
     return lst
     # todo count maches
