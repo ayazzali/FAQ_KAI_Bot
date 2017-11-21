@@ -19,7 +19,7 @@ needed_column = 2
 col_indx = (needed_column * 2) - 1
 
 T_Question_Answer="T_Question_Answer"
-QUESTION="Question"
+QUESTION="Versions_of_a_formulation" # used Question
 T_TELEGRAM_MESSAGES='T_Telegram_Messages'
 DB_NAME='db_001.db'
 
@@ -29,7 +29,7 @@ def start(bot, update):# нам сёда пришел поисковый зап�
     print(update.message.chat.username)
 
     results = search(update.message.text, T_Question_Answer, QUESTION)# TODO: поменять бд
-    sort = sorted(results, key=lambda k: k['matchedCount'])[:3]
+    sort = sorted(results, key=lambda k: k['matchedCount'])[:-4:-1]
     fma=For_more_answers()
     fma.message_id_from_usersText=(update.message.message_id)
     # выдаёт только ВопросОтвет
@@ -69,17 +69,20 @@ def giveAnswer (bot, update):
             if not alredy_exists:
                 sort.append(x)
             
-        sort=sort[:3]
+        sort=sort[:-4:-1] 
         
         for i, item in enumerate(sort):
             keyboard = [[InlineKeyboardButton("Показать ответ:", callback_data=item['question'][0])]]
             reply = InlineKeyboardMarkup(keyboard)
             t = item['question'][1]
-            bot.edit_message_text(text=str(t),
-                            chat_id=query.message.chat_id,
-                            message_id=int(fma_messages_ids[i]),#TODO think
-                            reply_markup=reply
-                            )
+            try:
+                bot.edit_message_text(text=str(t),
+                                chat_id=query.message.chat_id,
+                                message_id=int(fma_messages_ids[i]),#TODO think
+                                reply_markup=reply
+                                )
+            except BaseException : 
+                print('BaseException')
             fma.messages.append(str(item['question'][0])+',')
         
         gg=fma.Compress_for_recieve()
@@ -91,11 +94,18 @@ def giveAnswer (bot, update):
         else:
             keyboard = [[InlineKeyboardButton("Показать еще!", callback_data= gg)]]# TODO: ссылка на мессадж
         reply = InlineKeyboardMarkup(keyboard)
-        bot.edit_message_text(text="____У нас есть еще:)_____",
-                            chat_id=query.message.chat_id,
-                            message_id=query.message.message_id,
-                            reply_markup=reply
-                            )
+        try:
+            bot.edit_message_text(text="____У нас есть еще:)_____",
+                                chat_id=query.message.chat_id,
+                                message_id=query.message.message_id,
+                                reply_markup=reply
+                                )
+        except BaseException:
+            print( "Дошли до предела callback_data")
+            bot.edit_message_text(text="____ЭТО КОНЕЦ :(_____",
+                                chat_id=query.message.chat_id,
+                                message_id=query.message.message_id
+                                )
     else:
         #print(update.message.chat.username+' [giveAnswer]'+'\r\n'+query.message.text+'\r\n')
         t='<b>'+query.message.text+'</b> \r\n'+Db().GetByColumnName('db_001.db', 'T_Question_Answer', 'id',query.data)[0][2]
