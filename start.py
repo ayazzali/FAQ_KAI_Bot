@@ -17,37 +17,84 @@ needed_column = 2
 
 col_indx = (needed_column * 2) - 1
 
+T_Question_Answer="T_Question_Answer"
+QUESTION="Question"
+T_TELEGRAM_MESSAGES='T_Telegram_Messages'
+DB_NAME='db_001.db'
 
 
 def start(bot, update):# нам сёда пришел поисковый запрос от Юзера
     # подробнее об объекте update: https://core.telegram.org/bots/api#update
     print(update.message.chat.username)
 
-    results = search(update.message.text, "T_Question_Answer", "Question")# TODO: поменять бд
+    results = search(update.message.text, T_Question_Answer, QUESTION)# TODO: поменять бд
     sort = sorted(results, key=lambda k: k['matchedCount'])[:3]
+    fma=For_more_answers()
+    fma.message_id_from_usersText=(update.message.message_id)
     # выдаёт только ВопросОтвет
     for item in sort:
         keyboard = [[InlineKeyboardButton("Показать ответ:", callback_data=item['question'][0])]]
         reply = InlineKeyboardMarkup(keyboard)
         t = item['question'][1]
-        update.message.reply_text(str(t), reply_markup=reply)
-        
-    gg= str(update.message.message_id)+';' + str(sort[0]['question'][0])+','+str(sort[1]['question'][0])+','+str(sort[2]['question'][0] )
+        t=update.message.reply_text(str(t), reply_markup=reply)
+        fma.messages.append(str(item['question'][0])+','+str(t.message_id))
+    gg=fma.Compress_for_recieve()
     keyboard = [[InlineKeyboardButton("Показать еще!", callback_data= gg)]]# TODO: ссылка на мессадж
     reply = InlineKeyboardMarkup(keyboard)
     update.message.reply_text("____У нас есть еще:)_____", reply_markup=reply)
-        # bot.sendMessage(chat_id=update.message.chat_id, text=str(t), reply_markup=reply)
+    t=Db().Execute(DB_NAME,"INSERT INTO "+T_TELEGRAM_MESSAGES+"(message_id, Text) VALUES("+str(update.message.message_id)+", '"+update.message.text+"')")        # bot.sendMessage(chat_id=update.message.chat_id, text=str(t), reply_markup=reply)
 
 def giveAnswer (bot, update):
     print('[giveAnswer]:')
     query = update.callback_query
     print('[giveAnswer]' +query.message.text)
     # query = update.callback_query
-
+    message_id_Of_user_text=query.data.split(';')[0]
     if query.data.find(';')!=-1:
-        bot.edit_message_text(text="Тра-ля ЛЯЯЯЯЯЯЯЯЯЯЯЯЯЯЯЯЯЯЯЯЯЯ",
+        fma= For_more_answers().Decompress(query.data)
+        t=Db().ExecuteSingle(DB_NAME,"SELECT Text FROM "+T_TELEGRAM_MESSAGES+" WHERE message_id="+fma.message_id_from_usersText)
+        
+        results = search(t[0], T_Question_Answer, QUESTION)# TODO: поменять бд
+        results = sorted(results, key=lambda k: k['matchedCount'])
+        fma_answer_ids=[f.split(',')[0] for f in fma.messages]
+        fma_messages_ids=[f.split(',')[1] for f in fma.messages if f.split(',')[1] != '']# used not now
+        sort=[]
+        for x in results :
+            alredy_exists=False
+            for fmm_id in fma_answer_ids:
+                if int(fmm_id)== x['question'][0]:
+                    alredy_exists=True
+                    break
+            if not alredy_exists:
+                sort.append(x)
+            
+        sort=sort[:3]
+        
+        for i, item in enumerate(sort):
+            keyboard = [[InlineKeyboardButton("Показать ответ:", callback_data=item['question'][0])]]
+            reply = InlineKeyboardMarkup(keyboard)
+            t = item['question'][1]
+            bot.edit_message_text(text=str(t),
                             chat_id=query.message.chat_id,
-                            message_id=query.data.split(';')[0]), 
+                            message_id=int(fma_messages_ids[i]),#TODO think
+                            reply_markup=reply
+                            )
+            fma.messages.append(str(item['question'][0])+',')
+        
+        gg=fma.Compress_for_recieve()
+        if gg==query.data:
+            if len(sort) == 0:
+                print("больше нечего выдавать")
+                pass
+            keyboard = [[InlineKeyboardButton("Больше нет :(", callback_data= gg)]]
+        else:
+            keyboard = [[InlineKeyboardButton("Показать еще!", callback_data= gg)]]# TODO: ссылка на мессадж
+        reply = InlineKeyboardMarkup(keyboard)
+        bot.edit_message_text(text="____У нас есть еще:)_____",
+                            chat_id=query.message.chat_id,
+                            message_id=query.message.message_id,
+                            reply_markup=reply
+                            )
     else:
         #print(update.message.chat.username+' [giveAnswer]'+'\r\n'+query.message.text+'\r\n')
         t='<b>'+query.message.text+'</b> \r\n'+Db().GetByColumnName('db_001.db', 'T_Question_Answer', 'id',query.data)[0][2]
@@ -60,7 +107,7 @@ def search(text, table, column):
     resByAllWordsArr = []  # [[][][]]
     justMmm = []
     for word in word_cleaner(text):  # TODO: or 2 or 3 spaces
-        temp = Db().search_by_word_with_like('db_001.db', table, column, word)
+        temp = Db().search_by_word_with_like(DB_NAME, table, column, word)
         resByAllWordsArr.append(temp)  # append добавляет мссив в первую ячейку
         justMmm += temp
     r = []
@@ -107,6 +154,24 @@ def word_cleaner(lst):
     # todo count maches
 
 
+class For_more_answers:
+    """1024;1023,23;1021,12;1022,4"""
+
+    def __init__(self):
+        messages=[]
+    
+    message_id_from_usersText=''
+    """ ['5,1063', '23,1064', '19,1065'] """
+    messages=[]
+
+    def Compress_for_recieve(self):
+        """message_id_from_usersText,arr_str_message_ids_with_id_in_Db"""
+        return str(self.message_id_from_usersText)+';'+';'.join(self.messages)
+
+    def Decompress(self,str_from_callbackQueryData):
+        self.message_id_from_usersText=str_from_callbackQueryData.split(';')[0]
+        self.messages=str_from_callbackQueryData.split(';')[1:]#todo:..
+        return self
 # @kai7_bot 
 updater = Updater(token='461661232:AAExDNSsp3zQfL3oAovRhi3TVQKZWEJr7aI')  # тут токен, который выдал вам Ботский Отец!
 
