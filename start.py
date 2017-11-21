@@ -11,6 +11,7 @@ import hashlib
 from cleaner import Porter
 from operator import attrgetter
 from Db import Db
+from config import Config as cfg
 # import threading
 
 needed_column = 2   
@@ -173,7 +174,7 @@ class For_more_answers:
         self.messages=str_from_callbackQueryData.split(';')[1:]#todo:..
         return self
 # @kai7_bot 
-updater = Updater(token='461661232:AAExDNSsp3zQfL3oAovRhi3TVQKZWEJr7aI')  # тут токен, который выдал вам Ботский Отец!
+updater = Updater(token=cfg.getToken())  # тут токен, который выдал вам Ботский Отец!
 
 # start_handler = CommandHandler('', start)  # этот обработчик реагирует
 # только на команду /start
