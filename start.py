@@ -43,7 +43,8 @@ def start(bot, update):# нам сёда пришел поисковый зап�
     keyboard = [[InlineKeyboardButton("Показать еще!", callback_data= gg)]]# TODO: ссылка на мессадж
     reply = InlineKeyboardMarkup(keyboard)
     update.message.reply_text("____У нас есть еще:)_____", reply_markup=reply)
-    t=Db().Execute(DB_NAME,"INSERT INTO "+T_TELEGRAM_MESSAGES+"(message_id, Text) VALUES("+str(update.message.message_id)+", '"+update.message.text+"')")        # bot.sendMessage(chat_id=update.message.chat_id, text=str(t), reply_markup=reply)
+    t=Db().Execute(DB_NAME,"INSERT INTO "+T_TELEGRAM_MESSAGES+"(message_id, Text, User) VALUES("
+        +str(update.message.message_id)+", '"+update.message.text+"', '"+ str(update.message.chat).replace("'",'"') +"' )")        # bot.sendMessage(chat_id=update.message.chat_id, text=str(t), reply_markup=reply)
 
 def giveAnswer (bot, update):
     print('[giveAnswer]:')

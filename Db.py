@@ -46,4 +46,4 @@ class Db:
 conn1=sqlite3.connect("db_001.db")
 cur1= conn1.cursor()
 tName='T_Telegram_Messages'
-cur1.execute("CREATE TABLE IF NOT EXISTS "+tName+" (message_id INTEGER PRIMARY KEY , Text TEXT, Created DATETIME);")# maybu user_id?
+cur1.execute("CREATE TABLE IF NOT EXISTS "+tName+" (message_id INTEGER PRIMARY KEY , Text TEXT, User TEXT, Created DATETIME);")# maybu user_id?
