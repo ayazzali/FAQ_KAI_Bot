@@ -3,12 +3,12 @@ import os
 
 class Config:
 
-    def getToken(path= "settings.ini"):
+    def getToken(self, path= "settings.ini"):
         """
         Create, read, update, delete config
         """
         if not os.path.exists(path):
-            createConfig(path)
+            self.createConfig(path)
         
         config = configparser.ConfigParser()
         config.read(path)
@@ -17,7 +17,7 @@ class Config:
         token = config.get("Settings", "token")
         return token
 
-    def createConfig(path):
+    def createConfig(self, path):
         """
         Create a DEFAULT config file
         """
@@ -25,6 +25,7 @@ class Config:
         config.add_section("Settings")
         config.set("Settings", "DB_NAME", "db_001.db")
         config.set("Settings", "table_name", "T_Question_Answer")
+        config.set("Settings", "token", "461661232:AAExDNSsp3zQfL3oAovRhi3TVQKZWEJr7aI")
         
         config.set("Settings", "test2", "You are using %(font)s at %(font_size)s pt")
         
@@ -32,7 +33,7 @@ class Config:
             config.write(config_file)
 
     
-    def getConfig(path):
+    def getConfig(self, path):
         """
         Create, read, update, delete config
         """
@@ -49,5 +50,6 @@ class Config:
 
 if __name__ == "__main__":
     path = "settings.ini"
-    getToken()
+
+    Config().getToken()
     #createConfig(path)
