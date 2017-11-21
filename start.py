@@ -174,7 +174,7 @@ class For_more_answers:
         self.messages=str_from_callbackQueryData.split(';')[1:]#todo:..
         return self
 # @kai7_bot 
-updater = Updater(token=cfg.getToken())  # тут токен, который выдал вам Ботский Отец!
+updater = Updater(token=cfg().getToken())  # тут токен, который выдал вам Ботский Отец!
 
 # start_handler = CommandHandler('', start)  # этот обработчик реагирует
 # только на команду /start

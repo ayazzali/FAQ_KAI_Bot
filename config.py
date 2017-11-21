@@ -38,7 +38,7 @@ class Config:
         Create, read, update, delete config
         """
         if not os.path.exists(path):
-            createConfig(path)
+            self.createConfig(path)
         
         config = configparser.ConfigParser()
         config.read(path)
@@ -49,7 +49,6 @@ class Config:
         return self
 
 if __name__ == "__main__":
-    path = "settings.ini"
-
+    
     Config().getToken()
     #createConfig(path)
