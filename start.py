@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from telegram.ext import Updater  # пакет называется python-telegram-bot, но Python-
 from telegram.ext import CommandHandler  # модуль почему-то просто telegram ¯\_(ツ)_/¯
-from telegram.ext import MessageHandler
+from telegram.ext import MessageHandler, Filters
 from telegram.ext import RegexHandler
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, bot,ParseMode
 from telegram.ext import Updater, CommandHandler, CallbackQueryHandler
@@ -27,7 +27,9 @@ DB_NAME='db_001.db'
 def start(bot, update):# нам сёда пришел поисковый запрос от Юзера
     # подробнее об объекте update: https://core.telegram.org/bots/api#update
     print(update.message.chat.username)
-
+    if str(update.message.text).startswith("/start"):
+        update.message.reply_text("Привет! \r\nТы можешь написать вопрос про *Каи*. :) \r\nА я скину тебе лучшие. \r\nБаза была набрана в основном из 'Подслушано Каи' и офтильтрована нами. \r\nС наилучшими пожеланиями, команда 'Бот Номер Один'. ")
+        return
     results = search(update.message.text, T_Question_Answer, QUESTION)# TODO: поменять бд
     sort = sorted(results, key=lambda k: k['matchedCount'])[:-4:-1]
     fma=For_more_answers()
