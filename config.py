@@ -25,6 +25,7 @@ class Config:
         config.add_section("Settings")
         config.set("Settings", "DB_NAME", "db_001.db")
         config.set("Settings", "table_name", "T_Question_Answer")
+        # change it !!!
         config.set("Settings", "token", "461661232:AAExDNSsp3zQfL3oAovRhi3TVQKZWEJr7aI")
         
         config.set("Settings", "test2", "You are using %(font)s at %(font_size)s pt")
