@@ -17,6 +17,6 @@ FAQ для КНИТУ-КАИ
   - exec 2> /var/log/0KaiFaqBot_from_rc.local.log # send stderr from rc.local to a log file
   - exec 1>&2 # send stdout to the same log file
   - cd /root/FAQ_KAI_Bot
-  - nohup python3 start.py >> /root/FAQ_KAI_Bot& # real log
+  - nohup python3 start.py >> /root/FAQ_KAI_Bot/kaiBot.log &
 
 
