@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import logging
 from telegram.ext import Updater  # пакет называется python-telegram-bot, но Python-
 from telegram.ext import CommandHandler  # модуль почему-то просто telegram ¯\_(ツ)_/¯
 from telegram.ext import MessageHandler, Filters
@@ -26,7 +27,8 @@ DB_NAME='db_001.db'
 
 def start(bot, update):# нам сёда пришел поисковый запрос от Юзера
     # подробнее об объекте update: https://core.telegram.org/bots/api#update
-    print(update.message.chat.username)
+    # logging.warning(update.message.chat.username)
+    print(update.message.chat.username,flush=True)
     if str(update.message.text).startswith("/start"):
         update.message.reply_text("Привет! \r\nТы можешь написать вопрос про *Каи*. :) \r\nА я скину тебе лучшие. \r\nБаза была набрана в основном из 'Подслушано Каи' и офтильтрована нами. \r\nС наилучшими пожеланиями, команда 'Бот Номер Один'. ")
         return
@@ -188,8 +190,8 @@ start_handler = RegexHandler('.+', start)
 
 updater.dispatcher.add_handler(start_handler)  # регистрируем в госреестре обработчиков
 updater.dispatcher.add_handler(CallbackQueryHandler(giveAnswer))
+
 updater.start_polling()  # поехали!
-
+logging.warning('started')
 #updater.idle()
-input("started")
-
+# input("started")
