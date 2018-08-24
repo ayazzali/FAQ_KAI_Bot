@@ -1,5 +1,6 @@
 # FAQ_KAI_Bot
 FAQ для КНИТУ-КАИ
+username tg: @FAQ_KAIBot
 
 # How to run (for debian):
 - git clone https://github.com/ayazzali/FAQ_KAI_Bot.git
