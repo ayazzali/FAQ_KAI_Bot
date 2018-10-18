@@ -26,6 +26,7 @@ user=root
 stopsignal=KILL
 numprocs=1
 ```
+- do /etc/init.d/supervisor restart
 - to check status use command supervisorctl
 
 
